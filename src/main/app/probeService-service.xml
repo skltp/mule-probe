@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mule 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd" version="EE-3.4.1">
+	<!-- TODO: Add service specific definitions here -->
+	
+	<flow name="probeService-service" doc:name="probeService-service">
+	
+		<http:inbound-endpoint 
+		 	exchange-pattern="request-response" 
+		 	connector-ref="soitoolkit-http-connector"
+		 	transformer-refs="createCorrId objToStr logReqIn"
+		 	responseTransformer-refs="logRespOut"
+		 	address="${PROBESERVICE_INBOUND_URL}"
+			doc:name="HTTP" 
+			doc:description="Process HTTP requests or responses.">
+		</http:inbound-endpoint>
+
+        <scripting:component doc:name="Script">
+            <scripting:script engine="Groovy">
+            	String probeFile = new org.soitoolkit.commons.mule.util.RecursiveResourceBundle("mule-probe-config","mule-probe-config-override").getString('PROBESERVICE_FILE')
+            	new File(probeFile).text
+            </scripting:script>
+        </scripting:component>
+        
+        <logger level="INFO" message="Probe returns: #[payload]" doc:name="Log payload"/>
+        
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+        	<!-- Return HTTP 500 -->
+      		<set-property propertyName="http.status" value="500"/>
+      		<!-- Return configured error text -->
+      		<set-payload value="${PROBESERVICE_ERROR_TEXT}"/>
+      		<!-- Log error in logfile -->
+      		<logger level="ERROR" message="Probe returns error: #[payload]" doc:name="Log error"/>
+        </catch-exception-strategy>
+
+	</flow>
+
+ 
+</mule>

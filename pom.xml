@@ -6,10 +6,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 [soi-toolkit.gen.createDate=2014-03-09T18:30:20.098+01:00]
 [soi-toolkit.gen.artifactId=mule-probe]
 -->
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -21,14 +18,14 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
     
     <groupId>se.skltp.components</groupId>
     <artifactId>mule-probe</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-RC1</version>
     <packaging>mule</packaging>
     <name>mule-probe</name>
 
     <scm>
-		<connection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/trunk/</connection>
-		<developerConnection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/trunk/</developerConnection>
-		<url>http://skltpservices.googlecode.com/svn/Components/mule-probe/trunk/</url>
+		<connection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/tags/mule-probe-1.0.0-RC1</connection>
+		<developerConnection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/tags/mule-probe-1.0.0-RC1</developerConnection>
+		<url>http://skltpservices.googlecode.com/svn/Components/mule-probe/tags/mule-probe-1.0.0-RC1</url>
 	</scm>
 
 	<dependencies>	

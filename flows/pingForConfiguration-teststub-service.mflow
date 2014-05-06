@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="pingForConfiguration-teststub-service">
+    <global-unknown description="false" unknownName="pingforconfiguration-teststub-service" index="1" entity-id="global-unknown#1">
+        <content>&lt;simple-service xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; name=&quot;pingforconfiguration-teststub-service&quot; address=&quot;${PINGFORCONFIGURATION_TESTSTUB_INBOUND_URL}&quot; component-class=&quot;se.skltp.components.muleprobe.pingforconfiguration.PingForConfigurationTestProducer&quot; type=&quot;jax-ws&quot;/&gt;</content>
+    </global-unknown>
+</mule-configuration>

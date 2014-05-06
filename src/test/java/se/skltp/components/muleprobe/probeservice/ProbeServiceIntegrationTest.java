@@ -30,6 +30,7 @@ import java.io.InputStream;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.util.IOUtils;
@@ -39,6 +40,8 @@ import org.soitoolkit.commons.mule.file.FileUtil;
 import org.soitoolkit.commons.mule.rest.RestClient;
 import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
+
+import se.skltp.components.muleprobe.pingforconfiguration.PingForConfigurationTestProducer;
 
 public class ProbeServiceIntegrationTest extends AbstractTestCase {
 
@@ -59,8 +62,10 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 	}
 
 	protected String getConfigResources() {
-		return "soitoolkit-mule-jms-connector-activemq-embedded.xml," + "mule-probe-common.xml,"
-				+ "probeService-service.xml";
+		return "soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
+				"mule-probe-common.xml,"+ 
+				"teststub-services/pingForConfiguration-teststub-service.xml," +
+				"probeService-service.xml";
 	}
 
 	@Override
@@ -69,11 +74,17 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		restClient = new RestClient(muleContext, HTTP_CONNECTOR);
 		FileUtil.initFolder(new File(PROBESERVICE_TESTSTUB_FOLDER));
 	}
+	
+	@Before
+	public void setUpTest(){
+		PingForConfigurationTestProducer.PINGFOR_EXCEPTION = false;
+		PingForConfigurationTestProducer.PINGFOR_TIMEOUT = false;
+	}
 
 	@Test
 	public void probeService_returns_ok() throws Exception {
 		
-		writeStatusToProbeFile("OK");
+		setStatusInProbeFile("OK");
 		
 		// Call the http-service with proper input
 		MuleMessage response = restClient.doHttpPostRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL"), "");
@@ -87,7 +98,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 	@Test
 	public void probeService_returns_down() throws Exception {
 		
-		writeStatusToProbeFile("DOWN");
+		setStatusInProbeFile("DOWN");
 		
 		// Call the http-service with proper input
 		MuleMessage response = restClient.doHttpPostRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL"), "");
@@ -110,12 +121,64 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		assertEquals(rb.getString("PROBESERVICE_ERROR_TEXT"), getProbeResultAsString(response));
 	}
 	
+	@Test
+	public void probeService_returns_ok_when_pingforconfiguration_returns_ok() throws Exception {
+		
+		setStatusInProbeFile("OK");
+		
+		// Call the http-service with proper input
+		MuleMessage response = restClient.doHttpPostRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL"), "");
+		
+		// Assert http-status 500
+		assertEquals(Integer.toString(Status.OK.getStatusCode()), response.getInboundProperty("http.status"));
+		
+		assertEquals("OK", getProbeResultAsString(response));
+	}
+	
+	@Test
+	public void probeService_returns_error_when_any_pingforconfiguration_returns_error() throws Exception {
+		
+		setStatusInProbeFile("OK");
+		setTestProducerToReturnError();
+		
+		// Call the http-service with proper input
+		MuleMessage response = restClient.doHttpPostRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL"), "");
+		
+		// Assert http-status 500
+		assertEquals(Integer.toString(Status.INTERNAL_SERVER_ERROR.getStatusCode()), response.getInboundProperty("http.status"));
+		
+		assertEquals(rb.getString("PROBESERVICE_ERROR_TEXT"), getProbeResultAsString(response));
+	}
+	
+	@Test
+	public void probeService_returns_error_when_any_pingforconfiguration_timeout() throws Exception {
+		
+		setStatusInProbeFile("OK");
+		setTestProducerToTimeout();
+		
+		// Call the http-service with proper input
+		MuleMessage response = restClient.doHttpPostRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL"), "");
+		
+		// Assert http-status 500
+		assertEquals(Integer.toString(Status.INTERNAL_SERVER_ERROR.getStatusCode()), response.getInboundProperty("http.status"));
+		
+		assertEquals(rb.getString("PROBESERVICE_ERROR_TEXT"), getProbeResultAsString(response));
+	}
+	
+	private void setTestProducerToTimeout() {
+		PingForConfigurationTestProducer.PINGFOR_TIMEOUT = true;		
+	}
+
+	private void setTestProducerToReturnError() {
+		PingForConfigurationTestProducer.PINGFOR_EXCEPTION = true;	
+	}
+
 	private String getProbeResultAsString(MuleMessage response) {
 		String probeResult = IOUtils.toString((InputStream)response.getPayload());
 		return probeResult;
 	}
 	
-	private void writeStatusToProbeFile(String status) throws Exception{
+	private void setStatusInProbeFile(String status) throws Exception{
 		File probeFile = new File(rb.getString("PROBESERVICE_TESTSTUB_FILE"));
         BufferedWriter out = new BufferedWriter(new FileWriter(probeFile));
         out.write(status);

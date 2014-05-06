@@ -100,7 +100,7 @@
 		Use ":" as a separator if jaxb-objects from more than one java package will 
 		be used by the jaxb-transformers -->
 	<mulexml:jaxb-context name="jaxbContext"
-		packageNames="org.soitoolkit.commons.logentry.schema.v1" />
+		packageNames="org.soitoolkit.commons.logentry.schema.v1:se.riv.itintegration.monitoring.v1" />
 	<custom-transformer
 		class="org.soitoolkit.commons.mule.core.ObjectToStringTransformer"
 		name="objToStr" />

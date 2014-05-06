@@ -18,7 +18,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
     
     <groupId>se.skltp.components</groupId>
     <artifactId>mule-probe</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>mule</packaging>
     <name>mule-probe</name>
 
@@ -27,6 +27,12 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		<developerConnection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/trunk</developerConnection>
 		<url>http://skltpservices.googlecode.com/svn/Components/mule-probe/trunk</url>
 	</scm>
+	
+	<properties>
+		<!-- Properties for generating code from XML Schemas (JAX-WS) -->
+        <schema.path>${basedir}/src/main/resources/schemas</schema.path>
+        <cxf.version>2.5.6</cxf.version>
+	</properties>
 
 	<dependencies>	
 		<dependency>
@@ -248,6 +254,39 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		    </execution>
 		  </executions>
 		</plugin>
+		
+		<plugin>
+	        <groupId>org.apache.cxf</groupId>
+	        <artifactId>cxf-codegen-plugin</artifactId>
+	        <version>${cxf.version}</version>
+	        <executions>
+	          <execution>
+	            <id>generate-sources</id>
+	            <phase>generate-sources</phase>
+	            <configuration>
+	              <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+	              <wsdlOptions>
+					<wsdlOption>
+						<wsdl>${schema.path}/TD_MONITORING_1_0_0_R/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl</wsdl>
+						<extraargs>
+							<extraarg>-p</extraarg>
+							<extraarg>urn:riv:itintegration:monitoring:PingForConfiguration:1:rivtabp21=se.riv.itintegration.monitoring.rivtabp21.v1</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>urn:riv:itintegration:monitoring:PingForConfigurationResponder:1=se.riv.itintegration.monitoring.v1</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>urn:riv:itintegration:monitoring:1=se.riv.itintegration.monitoring.v1</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>urn:riv:itintegration:registry:1=se.riv.itintegration.registry.v1</extraarg>
+						</extraargs>
+					</wsdlOption>			
+	              </wsdlOptions>
+	            </configuration>
+	            <goals>
+	              <goal>wsdl2java</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+      	</plugin>
 				
       </plugins>
 

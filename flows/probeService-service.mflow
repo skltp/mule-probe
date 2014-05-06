@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="probeService-service">
-    <flow SubFlow="false" name="probeService-service" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="421c1d33-a9e3-4088-b610-dc4caee32293">
+    <flow SubFlow="false" name="probeService-service" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="9bfc56de-6dfc-4591-a70e-5f8fd44caefc">
         <properties>
             <property name="initialState"/>
             <property name="processingStrategy2"/>
@@ -60,13 +60,76 @@
                     </property-collection>
                 </properties>
             </pattern>
-            <pattern name="Log payload" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#1">
+            <pattern name="Variable" type="http://www.mulesoft.org/schema/mule/core/variable-transformer" entity-id="Variable#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
-                    <property name="message" value="Probe returns: #[payload]"/>
-                    <property name="category"/>
-                    <property name="level" value="INFO"/>
+                    <property name="variableName" value="probeFileValue"/>
+                    <property name="value" value="#[payload]"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/core/set-variable"/>
                     <property name="auxiliary;index" value="5"/>
+                </properties>
+            </pattern>
+            <splitter index="6" name="Choice" type="org.mule.tooling.ui.modules.core.pattern.cbr" entity-id="Choice#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property-collection name="fe27e4f3-d2ac-41ca-aacd-6af4bd277687">
+                        <property name="choice.expression" value="#[groovy:payload.contains('${PROBE_DOWN_CRITERIA}')]"/>
+                        <property-collection name="choice.attributes">
+                            <property name="expression" value="#[groovy:payload.contains('${PROBE_DOWN_CRITERIA}')]"/>
+                        </property-collection>
+                    </property-collection>
+                    <property-collection name="272fe673-3c25-4896-9394-9ec1f143a68f">
+                        <property name="choice.otherwise" value="true"/>
+                        <property-collection name="choice.attributes"/>
+                    </property-collection>
+                </properties>
+                <pattern name="Choice" type="org.mule.tooling.ui.modules.core.pattern.cbr" entity-id="Choice#2"/>
+                <compartment entity-id="compartment#1">
+                    <lane hadOnlyOneElement="false" index="8" isChoiceOtherwiseLane="false" entity-id="fe27e4f3-d2ac-41ca-aacd-6af4bd277687">
+                        <pattern name="Log payload" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#1">
+                            <graphicalData x="0" y="0" width="0" height="0"/>
+                            <properties>
+<property name="message" value="Probefile signals controlled down: #[payload]"/>
+<property name="category"/>
+<property name="level" value="DEBUG"/>
+<property name="auxiliary;index" value="8"/>
+                            </properties>
+                        </pattern>
+                    </lane>
+                    <lane hadOnlyOneElement="false" index="10" isChoiceOtherwiseLane="true" entity-id="272fe673-3c25-4896-9394-9ec1f143a68f">
+                        <pattern name="Log payload" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#2">
+                            <graphicalData x="0" y="0" width="0" height="0"/>
+                            <properties>
+<property name="message" value="Probefile signals up: #[payload]"/>
+<property name="category"/>
+<property name="level" value="DEBUG"/>
+<property name="auxiliary;index" value="10"/>
+                            </properties>
+                        </pattern>
+                        <pattern name="PingForConfiguration-flow" type="http://www.mulesoft.org/schema/mule/core/flow-ref" entity-id="Flow Reference#1">
+                            <graphicalData x="0" y="0" width="0" height="0"/>
+                            <properties>
+<property name="name" value="PingForConfiguration-flow"/>
+<property name="auxiliary;index" value="11"/>
+                            </properties>
+                        </pattern>
+                    </lane>
+                </compartment>
+            </splitter>
+            <pattern name="Set Payload" type="http://www.mulesoft.org/schema/mule/core/set-payload" entity-id="Set Payload#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="value" value="#[variable:probeFileValue]"/>
+                    <property name="auxiliary;index" value="12"/>
+                </properties>
+            </pattern>
+            <pattern name="Log payload" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#3">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="message" value="LB Probe returns: #[payload]"/>
+                    <property name="category" value="se.skltp.components.muleprobe.probeoutput"/>
+                    <property name="level" value="INFO"/>
+                    <property name="auxiliary;index" value="13"/>
                 </properties>
             </pattern>
             <scope name="Catch Exception Strategy" type="http://www.mulesoft.org/schema/mule/core/catch-exception-strategy" entity-id="Catch Exception Strategy#1">
@@ -74,9 +137,9 @@
                     <property name="labelConfigureConditionalExecutionUsingExpression"/>
                     <property name="when"/>
                     <property name="enableNotifications"/>
-                    <property name="auxiliary;index" value="6"/>
+                    <property name="auxiliary;index" value="14"/>
                 </properties>
-                <compartment entity-id="compartment#1">
+                <compartment entity-id="compartment#2">
                     <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#2">
                         <pattern name="Property" type="http://www.mulesoft.org/schema/mule/core/properties-transformer" entity-id="Property#1">
                             <graphicalData x="0" y="0" width="0" height="0"/>
@@ -84,28 +147,90 @@
 <property name="propertyName" value="http.status"/>
 <property name="value" value="500"/>
 <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/core/set-property"/>
-<property name="auxiliary;index" value="7"/>
+<property name="auxiliary;index" value="15"/>
                             </properties>
                         </pattern>
-                        <pattern name="Set Payload" type="http://www.mulesoft.org/schema/mule/core/set-payload" entity-id="Set Payload#1">
+                        <pattern name="Set Payload" type="http://www.mulesoft.org/schema/mule/core/set-payload" entity-id="Set Payload#2">
                             <graphicalData x="0" y="0" width="0" height="0"/>
                             <properties>
 <property name="value" value="${PROBESERVICE_ERROR_TEXT}"/>
-<property name="auxiliary;index" value="8"/>
+<property name="auxiliary;index" value="16"/>
                             </properties>
                         </pattern>
-                        <pattern name="Log error" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#2">
+                        <pattern name="Log error" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#4">
                             <graphicalData x="0" y="0" width="0" height="0"/>
                             <properties>
-<property name="message" value="Probe returns error: #[payload]"/>
-<property name="category"/>
+<property name="message" value="LB Probe returns error: #[payload]"/>
+<property name="category" value="se.skltp.components.muleprobe.probeoutput"/>
 <property name="level" value="ERROR"/>
-<property name="auxiliary;index" value="9"/>
+<property name="auxiliary;index" value="17"/>
                             </properties>
                         </pattern>
                     </lane>
                 </compartment>
             </scope>
+        </lane>
+    </flow>
+    <flow SubFlow="true" name="PingForConfiguration-flow" type="http://www.mulesoft.org/schema/mule/core/subflow" entity-id="a55f1add-0131-4c83-9fd4-034768a04004">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="18"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#3">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="Log PingForConfiguration URL" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#5">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="message" value="LB Probe performs downstream PingForConfiguration check on URL: ${PINGFORCONFIGURATION_OUTBOUND_URL}"/>
+                    <property name="category" value="se.skltp.components.muleprobe.probeoutput"/>
+                    <property name="level" value="INFO"/>
+                    <property name="auxiliary;index" value="19"/>
+                </properties>
+            </pattern>
+            <pattern name="Ping For Configuration transformer" type="org.mule.tooling.ui.modules.core.pattern.customTransformer" entity-id="Java#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="returnClass"/>
+                    <property name="ignoreBadInput"/>
+                    <property name="encoding"/>
+                    <property name="class" value="se.skltp.components.muleprobe.probeservice.PingForConfigurationRequestTransformer"/>
+                    <property name="auxiliary;index" value="20"/>
+                    <property name="mimeType"/>
+                </properties>
+            </pattern>
+            <endpoint direction="Outbound" message-exchange-pattern="RequestResponse" name="Ping For Configuration" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#2">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="port"/>
+                    <property name="host"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="followRedirects"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/http/endpoint"/>
+                    <property name="keep-alive"/>
+                    <property name="contentType"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="password"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs" value="logReqOut"/>
+                    <property name="httpLabel"/>
+                    <property name="address" value="${PINGFORCONFIGURATION_OUTBOUND_URL}"/>
+                    <property name="path"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs" value="logRespIn"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="auxiliary;index" value="21"/>
+                    <property name="responseTimeout" value="${SERVICE_TIMEOUT_MS}"/>
+                    <property name="mimeType"/>
+                    <property name="connector-ref" value="soitoolkit-http-connector"/>
+                </properties>
+            </endpoint>
         </lane>
     </flow>
 </mule-configuration>

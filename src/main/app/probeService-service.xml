@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" 
+<mule
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
@@ -8,92 +8,25 @@
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+	xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd" version="EE-3.4.1">
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd">
 	<!-- TODO: Add service specific definitions here -->
 	
-	<flow name="probeService-service" doc:name="probeService-service">
-	
+	<flow name="mule-probe" doc:name="mule-probe">
 		<http:inbound-endpoint 
-		 	exchange-pattern="request-response" 
-		 	connector-ref="soitoolkit-http-connector"
-		 	transformer-refs="createCorrId objToStr logReqIn"
-		 	responseTransformer-refs="logRespOut"
-		 	address="${PROBESERVICE_INBOUND_URL}"
-			doc:name="HTTP" 
-			doc:description="Process HTTP requests or responses.">
-		</http:inbound-endpoint>
-
-		<!-- Read text set in probeFile -->
-        <scripting:component doc:name="Script">
-            <scripting:script engine="Groovy">
-            	String probeFile = new org.soitoolkit.commons.mule.util.RecursiveResourceBundle("mule-probe-config","mule-probe-config-override").getString('PROBESERVICE_FILE')
-            	new File(probeFile).text
-            </scripting:script>
-        </scripting:component>
-        
-        <!-- Store the value from probefile for later use -->
-        <set-variable variableName="probeFileValue" value="#[payload]" doc:name="Variable"/>
-        
-        <!-- Check if LB Probe is configured to return DOWN, otherwise perform downstream checks -->
-        <choice doc:name="Choice">
-        	<!--  When probefile signals controlled DOWN to loadbalancer, just return without checking downstream PingForConfiguration -->
-            <when expression="#[groovy:payload.contains('${PROBE_DOWN_CRITERIA}')]">
-		        <logger level="DEBUG" message="Probefile signals controlled down: #[payload]" doc:name="Log payload"/>
-	        </when>
-	        <otherwise>
-	        	<logger level="DEBUG" message="Probefile signals up: #[payload]" doc:name="Log payload"/>
-	        	<flow-ref name="PingForConfiguration-flow" doc:name="PingForConfiguration-flow" />
-	        </otherwise>
-        </choice>
-        
-		<!-- 
-			For now just return the value set in probefile, assuming either 
-			#1, probefile signals DOWN
-			#2, PingForConfiguration request went well 
-		-->
-		<set-payload value="#[variable:probeFileValue]" doc:name="Set Payload"/>
-        
-        <logger level="INFO" message="LB Probe returns: #[payload]" category="se.skltp.components.muleprobe.probeoutput" doc:name="Log payload"/>
-        
-        <!-- Any trouble reading probefile or performing PingForConfiguration request is catched and return http 500 and text -->
-        <catch-exception-strategy doc:name="Catch Exception Strategy">
-        	<!-- Return HTTP 500 -->
-      		<set-property propertyName="http.status" value="500" doc:name="Property"/>
-      		<!-- Return configured error text -->
-      		<set-payload value="${PROBESERVICE_ERROR_TEXT}" doc:name="Set Payload"/>
-      		<!-- Log error in logfile -->
-      		<logger level="ERROR" message="LB Probe returns error: #[payload]" category="se.skltp.components.muleprobe.probeoutput" doc:name="Log error"/>
-        </catch-exception-strategy>
-
-	</flow>
-	
-	<sub-flow name="PingForConfiguration-flow" doc:name="PingForConfiguration-flow">
-		
-		<logger level="INFO" message="LB Probe performs downstream PingForConfiguration check on URL: ${PINGFORCONFIGURATION_OUTBOUND_URL}" 
-				category="se.skltp.components.muleprobe.probeoutput" doc:name="Log PingForConfiguration URL"/>
-			        
-       	<custom-transformer doc:name="Ping For Configuration transformer" class="se.skltp.components.muleprobe.probeservice.PingForConfigurationRequestTransformer"/>
-      
-        <http:outbound-endpoint 
-			doc:name="Ping For Configuration"
-            connector-ref="soitoolkit-http-connector"
-			address="${PINGFORCONFIGURATION_OUTBOUND_URL}" 
 			exchange-pattern="request-response"
-			responseTimeout="${SERVICE_TIMEOUT_MS}"
-			transformer-refs="logReqOut"
-			responseTransformer-refs="logRespIn">
-	        <cxf:jaxws-client 
-	        	port="PingForConfigurationResponderPort" 
-	        	operation="PingForConfiguration" 
-	        	clientClass="se.riv.itintegration.monitoring.rivtabp21.v1.PingForConfigurationResponderService"
-	        	wsdlLocation="classpath:/schemas/TD_MONITORING_1_0_0_R/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl"
-	       	/>
-		</http:outbound-endpoint>
-				
-	</sub-flow> 
+			address="${PROBESERVICE_INBOUND_URL}"
+			doc:name="HTTP"
+			doc:description="This endpoint receives an HTTP message." />
+        
+        <jersey:resources doc:name="REST">
+            <component class="se.skltp.components.muleprobe.ProbeStatusService"/>
+        </jersey:resources>
+        
+	</flow>
 </mule>

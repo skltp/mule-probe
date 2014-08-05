@@ -32,6 +32,10 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		<!-- Properties for generating code from XML Schemas (JAX-WS) -->
         <schema.path>${basedir}/src/main/resources/schemas</schema.path>
         <cxf.version>2.5.6</cxf.version>
+        <groovy.version>2.2.2</groovy.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<generated-sources-path>${basedir}/target/generated/src/main/java</generated-sources-path>
 	</properties>
 
 	<dependencies>	
@@ -54,6 +58,12 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 			<artifactId>soitoolkit-mule-3.3.1-dependencies</artifactId>
 			<version>${soitoolkit.version}</version>
 			<type>pom</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovy.version}</version>
 		</dependency>
 
  		
@@ -287,6 +297,62 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 	          </execution>
 	        </executions>
       	</plugin>
+      	
+      	<!-- Add Groovy src and test folders -->
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>1.5</version>
+			<executions>
+				<execution>
+					<id>add-source</id>
+					<phase>generate-sources</phase>
+					<goals>
+						<goal>add-source</goal>
+					</goals>
+					<configuration>
+						<sources>
+							<source>src/main/groovy</source>
+						</sources>
+					</configuration>
+				</execution>
+				<execution>
+					<id>add-test-source</id>
+					<phase>generate-test-sources</phase>
+					<goals>
+						<goal>add-test-source</goal>
+					</goals>
+					<configuration>
+						<sources>
+							<source>src/test/groovy</source>
+						</sources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+		<!-- Use Groovy/Java joint compiler -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.1</version>
+			<configuration>
+				<compilerId>groovy-eclipse-compiler</compilerId>
+				<source>1.7</source>
+				<target>1.7</target>
+			</configuration>
+			<dependencies>
+				<dependency>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy-eclipse-compiler</artifactId>
+					<version>2.8.0-01</version>
+				</dependency>
+				<dependency>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy-eclipse-batch</artifactId>
+					<version>2.1.8-01</version>
+				</dependency>
+			</dependencies>
+		</plugin>
 				
       </plugins>
 

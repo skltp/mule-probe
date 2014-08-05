@@ -63,13 +63,22 @@
 		<level value="ERROR" />
 	</logger>
 	
+	<logger name="org.apache.commons.httpclient">
+		<level value="ERROR" />
+	</logger>
+	
 	<logger name="se.skltp.components.muleprobe">
+		<level value="DEBUG" />
+	</logger>
+	
+	<!-- Startup notifications logged, eg all properties defined -->
+	<logger name="se.skltp.components.muleprobe.MuleStartupNotificationHandler">
 		<level value="INFO" />
 	</logger>
 
     <!-- Message logging using soi-toolkit LogTransformer class -->
 	<logger name="org.soitoolkit.commons.mule.messageLogger">
-		<level value="INFO" />
+		<level value="ERROR" />
 	</logger>
 	
 	<root>

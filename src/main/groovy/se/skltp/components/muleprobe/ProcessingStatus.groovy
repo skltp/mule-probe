@@ -18,26 +18,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package se.skltp.components.muleprobe.probeservice;
+package se.skltp.components.muleprobe;
 
-import static org.soitoolkit.commons.mule.mime.MimeUtil.sendFileAsMultipartHttpPost;
-import static se.skltp.components.muleprobe.MuleProbeMuleServer.getAddress;
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlRootElement
 
-import java.io.File;
+@XmlRootElement
+public class ProcessingStatus {
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class ProbeServiceTestSender {
-
-	private static final Logger log = LoggerFactory.getLogger(ProbeServiceTestSender.class);
-
-	public static void main(String[] args) {
-		String url       = getAddress("PROBESERVICE_INBOUND_URL");
-    	String inputFile = "src/test/resources/testfiles/probeService/input.txt";
-		int timeout      = 5000;
-
-		log.info("Post message to: {}, {} chars", url, inputFile.length());
-    	sendFileAsMultipartHttpPost(url, new File(inputFile), "payload", false, timeout);
+	@XmlElement
+	String name
+	
+	@XmlElement
+	String url
+	
+	@XmlElement
+	boolean serviceAvailable
+	
+	@XmlElement
+	String message
+	
+	@XmlElement
+	String connecttimeout
+	
+	@XmlElement
+	String responsetimeout
+	
+	public boolean getServiceAvailable(){
+		return serviceAvailable
 	}
 }

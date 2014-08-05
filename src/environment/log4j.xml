@@ -12,8 +12,8 @@
 
     <appender name="ROLLINGFILE" class="org.apache.log4j.RollingFileAppender">
         <param name="file" value="${mule.home}/logs/mule-app-mule-probe.log" />
-        <param name="MaxFileSize" value="1000KB" />
-        <param name="MaxBackupIndex" value="3" />
+        <param name="MaxFileSize" value="5MB" />
+        <param name="MaxBackupIndex" value="10" />
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %-5p [%t] %-30c - %m%n" />
         </layout> 
@@ -69,16 +69,25 @@
     </logger>
 
 	<logger name="org.soitoolkit.commons">
-		<level value="INFO" />
+		<level value="ERROR" />
+	</logger>
+	
+	<logger name="org.apache.commons.httpclient">
+		<level value="ERROR" />
 	</logger>
 	
 	<logger name="se.skltp.components.muleprobe">
 		<level value="INFO" />
 	</logger>
+	
+	<!-- Startup notifications logged, eg all properties defined -->
+	<logger name="se.skltp.components.muleprobe.MuleStartupNotificationHandler">
+		<level value="INFO" />
+	</logger>
 
     <!-- Message logging using soi-toolkit LogTransformer class -->
 	<logger name="org.soitoolkit.commons.mule.messageLogger">
-		<level value="INFO" />
+		<level value="ERROR" />
 	</logger>
 	
 	<root>

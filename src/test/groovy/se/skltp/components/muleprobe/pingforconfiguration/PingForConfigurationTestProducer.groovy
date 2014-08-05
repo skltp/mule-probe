@@ -18,34 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package se.skltp.components.muleprobe.pingforconfiguration;
+package se.skltp.components.muleprobe.pingforconfiguration
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import groovy.util.logging.Slf4j;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
+import java.text.SimpleDateFormat
+import java.util.Date
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
+import javax.jws.*
 
-import se.riv.itintegration.monitoring.rivtabp21.v1.PingForConfigurationResponderInterface;
-import se.riv.itintegration.monitoring.v1.ConfigurationType;
-import se.riv.itintegration.monitoring.v1.PingForConfigurationResponseType;
-import se.riv.itintegration.monitoring.v1.PingForConfigurationType;
-import se.skltp.components.muleprobe.MuleProbeMuleServer;
+import org.soitoolkit.commons.mule.util.RecursiveResourceBundle
 
+import se.riv.itintegration.monitoring.rivtabp21.v1.PingForConfigurationResponderInterface
+import se.riv.itintegration.monitoring.v1.*
+import se.skltp.components.muleprobe.MuleProbeMuleServer
+
+@Slf4j
 public class PingForConfigurationTestProducer implements PingForConfigurationResponderInterface{
 	
-	private static final Logger logger = LoggerFactory.getLogger(PingForConfigurationTestProducer.class);
-    private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("mule-probe-config");
+    private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("mule-probe-config")
 	
-	public static boolean PINGFOR_EXCEPTION = false;
-	public static boolean PINGFOR_TIMEOUT = false;
+	public static boolean PINGFOR_EXCEPTION = false
+	public static boolean PINGFOR_TIMEOUT = false
 	
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss")
 
 	@Override
 	@WebResult(name = "PingForConfigurationResponse", targetNamespace = "urn:riv:itintegration:monitoring:PingForConfigurationResponder:1", partName = "parameters")
@@ -55,32 +51,28 @@ public class PingForConfigurationTestProducer implements PingForConfigurationRes
 			@WebParam(partName = "parameters", name = "PingForConfiguration", targetNamespace = "urn:riv:itintegration:monitoring:PingForConfigurationResponder:1") PingForConfigurationType parameters) {
 		
 		if(PINGFOR_EXCEPTION){
-			throw new RuntimeException("Logical address to trigger Exeption was called");
+			//After exception reset flag to be able to return OK responses in tests
+			PINGFOR_EXCEPTION = false
+			throw new RuntimeException("Logical address to trigger Exeption was called")
 		}else if (PINGFOR_TIMEOUT){
-			forceTimeout();
+			//After timeout reset flag to be able to return OK responses in tests
+			PINGFOR_TIMEOUT = false
+			sleep Long.valueOf(rb.getString("SO_TIMEOUT_MS")) + 1000
+			log.info "TestProducer force a timeout to happen..."
 		}
 		
-		PingForConfigurationResponseType pingForConfigurationResponse = new PingForConfigurationResponseType();
-		pingForConfigurationResponse.setPingDateTime(formatter.format(new Date()));
-		pingForConfigurationResponse.setVersion("1.0");
-		pingForConfigurationResponse.getConfiguration().add(createConfigurationResponse("Applikation", "VP"));
+		PingForConfigurationResponseType pingForConfigurationResponse = new PingForConfigurationResponseType()
+		pingForConfigurationResponse.pingDateTime = formatter.format(new Date())
+		pingForConfigurationResponse.version = "1.0"
+		pingForConfigurationResponse.configuration.add(createConfigurationResponse("Applikation", "VP"))
 		
-		return pingForConfigurationResponse;
+		return pingForConfigurationResponse
 	}
 
 	private ConfigurationType createConfigurationResponse(String name, String value) {
-		ConfigurationType configuration = new ConfigurationType();
-		configuration.setName(name);
-		configuration.setValue(value);
+		ConfigurationType configuration = new ConfigurationType()
+		configuration.name = name
+		configuration.value = value
 		return configuration;
 	}
-	
-	private void forceTimeout() {
-		try {
-			logger.info("TestProducer force a timeout to happen...");
-			Thread.sleep(Long.valueOf(rb.getString("SERVICE_TIMEOUT_MS")) + 1000);
-		} catch (InterruptedException e) {
-		}
-	}
-
 }

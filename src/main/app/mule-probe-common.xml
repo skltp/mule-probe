@@ -82,6 +82,10 @@
 	<rest-router:config />
 	
 	<spring:beans>
+		<spring:bean name="muleStartupNotification" class="se.skltp.components.muleprobe.MuleStartupNotificationHandler"/>
+	</spring:beans>
+	
+	<spring:beans>
 		<spring:import resource="classpath:soitoolkit-mule-http-connector.xml" />
 		<spring:import resource="classpath:soitoolkit-mule-file-connector.xml" />
 	</spring:beans>

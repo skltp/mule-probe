@@ -39,6 +39,14 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 	</properties>
 
 	<dependencies>	
+	
+		<!-- add the possibilities to enable/disable logging to amq using property TP_DO_LOG_TO_JMS=true/false -->
+		<dependency>
+			<groupId>se.skltp.commons</groupId>
+			<artifactId>tp-commons-mule</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		
 		<dependency>
 		  <groupId>org.soitoolkit.commons.components</groupId>
 			<artifactId>soitoolkit-commons-mule</artifactId>

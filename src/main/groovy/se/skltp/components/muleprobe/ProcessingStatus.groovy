@@ -23,6 +23,12 @@ package se.skltp.components.muleprobe;
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlRootElement
 
+import org.codehaus.jackson.annotate.JsonAutoDetect
+import org.codehaus.jackson.annotate.JsonIgnore
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonAutoDetect
 @XmlRootElement
 public class ProcessingStatus {
 
@@ -33,10 +39,16 @@ public class ProcessingStatus {
 	String url
 	
 	@XmlElement
+	boolean probeAvailable
+	
+	@XmlElement
+	String probeMessage
+	
+	@XmlElement
 	boolean serviceAvailable
 	
 	@XmlElement
-	String message
+	String serviceMessage
 	
 	@XmlElement
 	String connecttimeout
@@ -46,5 +58,9 @@ public class ProcessingStatus {
 	
 	public boolean getServiceAvailable(){
 		return serviceAvailable
+	}
+	
+	public boolean getProbeAvailable(){
+		return probeAvailable
 	}
 }

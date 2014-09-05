@@ -78,7 +78,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		PingForConfigurationTestProducer.PINGFOR_EXCEPTION = false
 		PingForConfigurationTestProducer.PINGFOR_TIMEOUT = false
 	}
-
+	
 	@Test
 	public void probeService_returns_ok_on_selected_resource() throws Exception {
 		
@@ -93,14 +93,20 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		def slurper = new JsonSlurper()
 		def result = slurper.parseText(getProbeResultAsString(response))
 		
+		//Fields to be in non verbose response
 		assert result.name == "vp"
-		assert result.url == "http://localhost:8090/mule-probe/teststub-services/PingForConfiguration/1/rivtabp21?connector=soitoolkit-http-connector"
 		assert result.serviceAvailable == true
-		assert result.message.contains("<configuration><name>Applikation</name><value>VP</value></configuration>") == true
+		
+		//Fields not to be in non verbose response
+		assert result["url"] == null
+		assert result["serviceMessage"] == null
+		assert result["probeMessage"] == null
+		assert result["connecttimeout"] == null
+		assert result["responsetimeout"] == null
 	}
 	
 	@Test
-	public void probeService_returns_ok_on_all_resources() throws Exception {
+	public void probeService_returns_ok_on_all_resources_always_verbose() throws Exception {
 		
 		setStatusInProbeFile("OK")
 		
@@ -118,21 +124,24 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		assert result[0].serviceAvailable == true
 		assert result[0].connecttimeout == rb.getString("CONNECTION_TIMEOUT_MS")
 		assert result[0].responsetimeout == rb.getString("SO_TIMEOUT_MS")
+		assert result[0].probeAvailable == true
+		assert result[0].probeMessage == "Muleprobe probeFile signals OK"
 		
 		//Uses default timeout settings
 		assert result[1].name == "fkadapter"
 		assert result[1].serviceAvailable == true
 		assert result[1].connecttimeout == rb.getString("CONNECTION_TIMEOUT_MS")
 		assert result[1].responsetimeout == rb.getString("SO_TIMEOUT_MS")
+		assert result[1].probeAvailable == true
+		assert result[1].probeMessage == "Muleprobe probeFile signals OK"
 		
 		//Uses not default timeout settings
 		assert result[2].name == "vp"
 		assert result[2].serviceAvailable == true
 		assert result[2].connecttimeout == rb.getString("probe.ping.vp.connecttimeout");
 		assert result[2].responsetimeout == rb.getString("probe.ping.vp.responsetimeout");
-		
-		assert result[3].name == "muleprobe"
-		assert result[3].serviceAvailable == true
+		assert result[2].probeAvailable == true
+		assert result[2].probeMessage == "Muleprobe probeFile signals OK"
 
 	}
 	
@@ -154,7 +163,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("DOWN")
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -165,7 +174,9 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		assert result.name == "vp"
 		assert result.url == "http://localhost:8090/mule-probe/teststub-services/PingForConfiguration/1/rivtabp21?connector=soitoolkit-http-connector"
 		assert result.serviceAvailable == false
-		assert result.message == "Probefile signals: DOWN"
+		assert result.serviceMessage == null
+		assert result.probeAvailable == false
+		assert result.probeMessage == "Muleprobe probeFile signals DOWN, no check against producers will be performed"
 	}
 	
 	@Test
@@ -174,7 +185,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("DOWN ")
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -182,17 +193,21 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		def slurper = new JsonSlurper()
 		def result = slurper.parseText(getProbeResultAsString(response))
 		
+		println result.probeMessage
+		
 		assert result.name == "vp"
 		assert result.url == "http://localhost:8090/mule-probe/teststub-services/PingForConfiguration/1/rivtabp21?connector=soitoolkit-http-connector"
 		assert result.serviceAvailable == false
-		assert result.message == "Probefile signals: DOWN "
+		assert result.serviceMessage == null
+		assert result.probeAvailable == false
+		assert result.probeMessage == "Muleprobe probeFile signals DOWN , no check against producers will be performed"
 	}
 	
 	@Test
 	public void probeService_returns_error_when_probefile_is_missing() throws Exception {
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -203,7 +218,9 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		assert result.name == 'vp'
 		assert result.url == 'http://localhost:8090/mule-probe/teststub-services/PingForConfiguration/1/rivtabp21?connector=soitoolkit-http-connector'
 		assert result.serviceAvailable == false
-		assert result.message == "Configured probeFile target/probeService/probeFile.txt does not exist, muleprobe signals unavailable"
+		assert result.serviceMessage == null
+		assert result.probeAvailable == false
+		assert result.probeMessage == "Configured probeFile target/probeService/probeFile.txt does not exist, muleprobe signals unavailable when file is missing"
 	}
 	
 	@Test
@@ -213,7 +230,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToReturnError()
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -223,7 +240,9 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		
 		assert result.name == "vp"
 		assert result.serviceAvailable == false
-		assert result.message.contains("<faultstring>Logical address to trigger Exeption was called</faultstring>") == true
+		assert result.serviceMessage.contains("<faultstring>Logical address to trigger Exeption was called</faultstring>") == true
+		assert result.probeAvailable == true
+		assert result.probeMessage == "Muleprobe probeFile signals OK"
 	}
 	
 	@Test
@@ -233,7 +252,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToReturnError();
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -243,15 +262,18 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		
 		assert result[0].name == "engagemangsindex"
 		assert result[0].serviceAvailable == false
+		assert result[0].probeAvailable == true
+		assert result[0].probeMessage == "Muleprobe probeFile signals OK"
 		
 		assert result[1].name == "fkadapter"
 		assert result[1].serviceAvailable == true
+		assert result[1].probeAvailable == true
+		assert result[1].probeMessage == "Muleprobe probeFile signals OK"
 		
 		assert result[2].name == "vp"
 		assert result[2].serviceAvailable == true
-		
-		assert result[3].name == "muleprobe"
-		assert result[3].serviceAvailable == true
+		assert result[2].probeAvailable == true
+		assert result[2].probeMessage == "Muleprobe probeFile signals OK"
 	}
 	
 	@Test
@@ -261,7 +283,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToTimeout()
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status/vp?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -271,7 +293,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		
 		assert result.name == "vp"
 		assert result.serviceAvailable == false
-		assert result.message == "Read timed out"
+		assert result.serviceMessage == "Read timed out"
 	}
 	
 	@Test
@@ -281,7 +303,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToTimeout()
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/status?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -291,19 +313,22 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		
 		assert result[0].name == "engagemangsindex"
 		assert result[0].serviceAvailable == false
-		assert result[0].message == "Read timed out"
+		assert result[0].serviceMessage == "Read timed out"
+		assert result[0].probeAvailable == true
+		assert result[0].probeMessage == "Muleprobe probeFile signals OK"
 		
 		assert result[1].name == "fkadapter"
 		assert result[1].serviceAvailable == true
-		assert result[1].message != "Read timed out"
+		assert result[1].serviceMessage != "Read timed out"
+		assert result[1].probeAvailable == true
+		assert result[1].probeMessage == "Muleprobe probeFile signals OK"
 		
 		assert result[2].name == "vp"
 		assert result[2].serviceAvailable == true
-		assert result[2].message != "Read timed out"
+		assert result[2].serviceMessage != "Read timed out"
+		assert result[2].probeAvailable == true
+		assert result[2].probeMessage == "Muleprobe probeFile signals OK"
 		
-		assert result[3].name == "muleprobe"
-		assert result[3].serviceAvailable == true
-		assert result[3].message != "Read timed out"
 	}
 	
 	private void setTestProducerToTimeout() {

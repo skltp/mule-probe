@@ -55,9 +55,8 @@
 			or production environments) --><!-- TODO: Add import of environment 
 			specific configuration files here as required --><!-- Import the JMS-provider used in 
 			production here, embedded JMS providers used for integration tests are loaded 
-			by the *IntegratIonTest.java classes directly -->
-		<spring:import
-			resource="classpath:soitoolkit-mule-jms-connector-activemq-external.xml" />
+			by the *IntegratIonTest.java classes directly
+		-->
 	</spring:beans>
 	
 	<!-- Used by integration tests only -->

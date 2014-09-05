@@ -40,11 +40,11 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 
 	<dependencies>	
 	
-		<!-- add the possibilities to enable/disable logging to amq using property TP_DO_LOG_TO_JMS=true/false -->
+		<!-- itintegration monitoring schemas för PingForConfiguration -->
 		<dependency>
-			<groupId>se.skltp.commons</groupId>
-			<artifactId>tp-commons-mule</artifactId>
-			<version>1.0.1</version>
+		  	<groupId>se.skltp.itintegration.monitoring</groupId>
+  			<artifactId>ServiceContracts_itintegration_monitoring</artifactId>
+  			<version>1.0</version>
 		</dependency>
 		
 		<dependency>
@@ -116,6 +116,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 							<exclude>**/*.dtd</exclude>
 							<exclude>**/*.jks</exclude>
 							<exclude>**/*.pem</exclude>
+							<exclude>**/probeFile.txt</exclude>
 						</excludes>
 						<useDefaultExcludes>true</useDefaultExcludes>
 						<mapping>

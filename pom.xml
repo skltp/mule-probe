@@ -25,7 +25,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
     <scm>
 			<url>http://github.com/skltp/mule-probe</url>
 			<connection>scm:git:git://github.com/skltp/mule-probe.git</connection>
-			<developerConnection>scm:git:git://github.com/skltp/mule-probe</developerConnection>
+			<developerConnection>scm:git:git://github.com/skltp/mule-probe.git</developerConnection>
 			<tag>HEAD</tag>
 		</scm>
 

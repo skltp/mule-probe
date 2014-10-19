@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!
 [soi-toolkit.gen.version=0.6.1]
 [soi-toolkit.gen.type=services]
@@ -15,7 +15,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
         <artifactId>soitoolkit-default-parent</artifactId>
         <version>0.6.1</version>
     </parent>
-    
+
     <groupId>se.skltp.components</groupId>
     <artifactId>mule-probe</artifactId>
     <version>2.0.1-RC4-SNAPSHOT</version>
@@ -23,11 +23,12 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
     <name>mule-probe</name>
 
     <scm>
-		<connection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/trunk</connection>
-		<developerConnection>scm:svn:https://skltpservices.googlecode.com/svn/Components/mule-probe/trunk</developerConnection>
-		<url>http://skltpservices.googlecode.com/svn/Components/mule-probe/trunk</url>
-	</scm>
-	
+			<url>http://github.com/skltp/mule-probe</url>
+			<connection>scm:git:git://github.com/skltp/mule-probe.git</connection>
+			<developerConnection>scm:git:git://github.com/skltp/mule-probe</developerConnection>
+			<tag>HEAD</tag>
+		</scm>
+
 	<properties>
 		<!-- Properties for generating code from XML Schemas (JAX-WS) -->
         <schema.path>${basedir}/src/main/resources/schemas</schema.path>
@@ -38,15 +39,15 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		<generated-sources-path>${basedir}/target/generated/src/main/java</generated-sources-path>
 	</properties>
 
-	<dependencies>	
-	
+	<dependencies>
+
 		<!-- itintegration monitoring schemas för PingForConfiguration -->
 		<dependency>
 		  	<groupId>se.skltp.itintegration.monitoring</groupId>
   			<artifactId>ServiceContracts_itintegration_monitoring</artifactId>
   			<version>1.0</version>
 		</dependency>
-		
+
 		<dependency>
 		  <groupId>org.soitoolkit.commons.components</groupId>
 			<artifactId>soitoolkit-commons-mule</artifactId>
@@ -67,15 +68,15 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 			<version>${soitoolkit.version}</version>
 			<type>pom</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>${groovy.version}</version>
 		</dependency>
 
- 		
-	</dependencies> 
+
+	</dependencies>
 
     <build>
         <resources>
@@ -87,7 +88,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
                 <directory>${basedir}/src/main/app</directory>
             </resource>
         </resources>
-        
+
         <pluginManagement>
 			<plugins>
 				<plugin>
@@ -97,7 +98,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 					<configuration>
 						<properties>
 							<year>2013</year>
-							<copyright>Center for eHalsa i samverkan (CeHis). 
+							<copyright>Center for eHalsa i samverkan (CeHis).
 							&lt;http://cehis.se/&gt;</copyright>
 							<product>SKLTP</product>
 						</properties>
@@ -125,14 +126,25 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 						<useDefaultMapping>true</useDefaultMapping>
 					</configuration>
 				</plugin>
+				<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.1</version>
+						<configuration>
+								<autoVersionSubmodules>true</autoVersionSubmodules>
+								<tagNameFormat>v@{project.version}</tagNameFormat>
+								<pushChanges>false</pushChanges>
+								<localCheckout>true</localCheckout>
+						</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
-		<plugins>  
+		<plugins>
 			<plugin>
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
-			</plugin> 
+			</plugin>
             <plugin>
                 <!-- Add mule-nature to the eclipse-.project-file -->
                 <artifactId>maven-eclipse-plugin</artifactId>
@@ -226,11 +238,11 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
                     </exclusions>
                 </configuration>
             </plugin>
-            
+
             <plugin>
               <artifactId>maven-jar-plugin</artifactId>
               <configuration>
-                <!-- 
+                <!--
                  if no classifier is declared, then a mvn install results in a file in
                  the local repo: ic2-1.0.0-SNAPSHOT.mule
                  which is a jar-file - only strangely named and with a bad extension
@@ -273,7 +285,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		    </execution>
 		  </executions>
 		</plugin>
-		
+
 		<plugin>
 	        <groupId>org.apache.cxf</groupId>
 	        <artifactId>cxf-codegen-plugin</artifactId>
@@ -297,7 +309,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 							<extraarg>-p</extraarg>
 							<extraarg>urn:riv:itintegration:registry:1=se.riv.itintegration.registry.v1</extraarg>
 						</extraargs>
-					</wsdlOption>			
+					</wsdlOption>
 	              </wsdlOptions>
 	            </configuration>
 	            <goals>
@@ -306,7 +318,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 	          </execution>
 	        </executions>
       	</plugin>
-      	
+
       	<!-- Add Groovy src and test folders -->
 		<plugin>
 			<groupId>org.codehaus.mojo</groupId>
@@ -362,7 +374,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 				</dependency>
 			</dependencies>
 		</plugin>
-				
+
       </plugins>
 
     </build>
@@ -399,7 +411,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
 			<id>license</id>
 			<activation>

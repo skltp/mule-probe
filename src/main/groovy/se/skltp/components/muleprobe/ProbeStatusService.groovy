@@ -245,7 +245,8 @@ public class ProbeStatusService {
 		
 		def method = new PostMethod(serviceToProcess.url)
 		method.setRequestEntity(new StringRequestEntity(payload, 'text/xml', 'utf-8' ))
-	
+		method.setRequestHeader("Connection","close");
+		
 		try {
 			def status = client.executeMethod(method)
 			

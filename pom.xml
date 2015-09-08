@@ -11,9 +11,9 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 	<modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.soitoolkit.commons.poms</groupId>
-        <artifactId>soitoolkit-default-parent</artifactId>
-        <version>0.6.1</version>
+        <groupId>se.skltp.commons</groupId>
+        <artifactId>skltp-commons-mule-parent</artifactId>
+        <version>1.0.1</version>
     </parent>
 
     <groupId>se.skltp.components</groupId>

@@ -59,14 +59,16 @@ public class ProbeStatusService {
 	
 	final String defaultResponseTimeout = rrb.getString("SO_TIMEOUT_MS")
 	
+	final String defaultOkReturnString = rrb.getString("PROBE_RETURN_OK_STRING");
+	
 	def probeFile = new File(probeFilePath)
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("probe/status")
-	public Response getStatus() {
+	public Response getStatus(@DefaultValue("false") @QueryParam("verbose") boolean verbose) {
 		
-		log.debug "getStatus() called on all resources behind probe"
+		log.debug "getStatus() called on all resources behind probe using verbose=$verbose"
 			
 		//Get all services to check status on
 		List<ProcessingStatus> servicesToProcess = getServicesToProcess()
@@ -91,10 +93,12 @@ public class ProbeStatusService {
 			}
 		}
 		
-		
-		
 		//No service reports unavailable, return OK
-		return Response.ok(servicesToProcess).build();
+		if(!verbose) {
+			return Response.ok(defaultOkReturnString).build()
+		} else {
+			return Response.ok(servicesToProcess).build()
+		}
 		
 	}
 
@@ -127,21 +131,15 @@ public class ProbeStatusService {
 		}
 		
 		/*
-		 * Remove fields that should not be included in Json response. According to doc this should
-		 * be possible to solve using @JsonViews, but for know this works to test the conecpt of
-		 * sending only certain data in response to a load balancer.
+		 * Check which type of response that we should return, simple string or JSON
 		 */
-		if(!verbose){
-			serviceToProcess.connecttimeout = null
-			serviceToProcess.probeMessage = null
-			serviceToProcess.responsetimeout = null
-			serviceToProcess.serviceMessage = null
-			serviceToProcess.url = null
+		if(!verbose) {
+			return Response.ok(defaultOkReturnString).build()
+		} else {	
+			return Response.ok(serviceToProcess).build()
 		}
-			
-		return Response.ok(serviceToProcess).build()
 	}
-	
+		
 	/*
 	 * Get all services to process
 	 */

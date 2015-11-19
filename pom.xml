@@ -18,7 +18,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 
     <groupId>se.skltp.components</groupId>
     <artifactId>mule-probe</artifactId>
-    <version>3.0-RC2</version>
+    <version>3.0-RC3-SNAPSHOT</version>
     <packaging>mule</packaging>
     <name>mule-probe</name>
 
@@ -26,7 +26,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 			<url>http://github.com/skltp/mule-probe</url>
 			<connection>scm:git:git://github.com/skltp/mule-probe.git</connection>
 			<developerConnection>scm:git:git://github.com/skltp/mule-probe.git</developerConnection>
-			<tag>v3.0-RC2</tag>
+			<tag>HEAD</tag>
 		</scm>
 
 	<properties>

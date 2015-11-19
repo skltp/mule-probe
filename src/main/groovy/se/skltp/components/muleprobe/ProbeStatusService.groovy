@@ -65,7 +65,7 @@ public class ProbeStatusService {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/")
+	@Path("/probe")
 	public Response getStatus(@DefaultValue("false") @QueryParam("verbose") boolean verbose) {
 		
 		log.debug "getStatus() called on all resources behind probe using verbose=$verbose"
@@ -104,7 +104,7 @@ public class ProbeStatusService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{name}")
+	@Path("/probe/{name}")
 	public Response getStatusOnName(@PathParam("name") String name, @DefaultValue("false") @QueryParam("verbose") boolean verbose) {
 		
 		log.debug "getStatus() called on resource name=$name using verbose=$verbose"

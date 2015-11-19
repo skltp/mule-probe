@@ -87,7 +87,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("OK")
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp")
 		
 		// Assert http-status 200
 		assertEquals(Integer.toString(Status.OK.getStatusCode()), response.getInboundProperty("http.status"))
@@ -101,7 +101,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("OK")
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp?verbose=true")
 
 		// Assert http-status 200
 		assertEquals(Integer.toString(Status.OK.getStatusCode()), response.getInboundProperty("http.status"))
@@ -125,7 +125,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("OK")
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/unknown")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/unknown")
 
 		// Assert http-status 403
 		assertEquals(Integer.toString(Status.NOT_FOUND.getStatusCode()), response.getInboundProperty("http.status"))
@@ -137,7 +137,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("DOWN")
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp")
 
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -150,7 +150,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("DOWN")
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp?verbose=true")
 
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -172,7 +172,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("DOWN ")
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp?verbose=true")
 
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -197,7 +197,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToTimeout()
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp")
 
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -210,7 +210,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToTimeout()
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/vp?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/vp?verbose=true")
 
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -230,7 +230,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("OK")
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe")
 		
 		// Assert http-status 200
 		assertEquals(Integer.toString(Status.OK.getStatusCode()), response.getInboundProperty("http.status"))
@@ -245,7 +245,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("OK")
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe?verbose=true")
 		
 		// Assert http-status 200
 		assertEquals(Integer.toString(Status.OK.getStatusCode()), response.getInboundProperty("http.status"))
@@ -285,7 +285,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToReturnError();
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))		
@@ -298,7 +298,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToReturnError();
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -329,7 +329,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToTimeout()
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -342,7 +342,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setTestProducerToTimeout()
 		
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/?verbose=true")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe?verbose=true")
 		
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
@@ -375,7 +375,7 @@ public class ProbeServiceIntegrationTest extends AbstractTestCase {
 		setStatusInProbeFile("DOWN")
 
 		// Call the http-service with proper input
-		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/")
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe")
 
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))

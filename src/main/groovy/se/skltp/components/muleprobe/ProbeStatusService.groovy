@@ -73,33 +73,45 @@ public class ProbeStatusService {
 		//Get all services to check status on
 		List<ProcessingStatus> servicesToProcess = getServicesToProcess()
 		
-		//Check if probe is down
-		for (serviceToProcess in servicesToProcess) {
-			if(!serviceToProcess.probeAvailable){
-				return Response.status(Status.SERVICE_UNAVAILABLE).entity(servicesToProcess).build();
+		// Check if no service are configured ie list is empty. If so do a check if probe is available and return result!
+		if (servicesToProcess.size == 0) {
+			ProcessingStatus dummyProcess = new ProcessingStatus()
+			addProbeStatus(dummyProcess)
+
+			if(!verbose) {
+				return Response.ok(defaultOkReturnString).build()
+			} else {
+				return Response.ok(dummyProcess).build()
 			}
-		}
-		
-		//Do the status check on all components behind the probe
-		for (serviceToProcess in servicesToProcess) {
-			doPost(serviceToProcess)
-		}
-		
-		//If any service calls reports failure, return the complete result and status service unavailable
-		for (serviceToProcess in servicesToProcess) {
-			if(!serviceToProcess.serviceAvailable){
-				log.error "Resource with name: $serviceToProcess.name, is not available for service"
-				return Response.status(Status.SERVICE_UNAVAILABLE).entity(servicesToProcess).build();
-			}
-		}
-		
-		//No service reports unavailable, return OK
-		if(!verbose) {
-			return Response.ok(defaultOkReturnString).build()
 		} else {
-			return Response.ok(servicesToProcess).build()
+				
+			//Check if probe is down
+			for (serviceToProcess in servicesToProcess) {
+				if(!serviceToProcess.probeAvailable){
+					return Response.status(Status.SERVICE_UNAVAILABLE).entity(servicesToProcess).build();
+				}
+			}
+			
+			//Do the status check on all components behind the probe
+			for (serviceToProcess in servicesToProcess) {
+				doPost(serviceToProcess)
+			}
+			
+			//If any service calls reports failure, return the complete result and status service unavailable
+			for (serviceToProcess in servicesToProcess) {
+				if(!serviceToProcess.serviceAvailable){
+					log.error "Resource with name: $serviceToProcess.name, is not available for service"
+					return Response.status(Status.SERVICE_UNAVAILABLE).entity(servicesToProcess).build();
+				}
+			}
+			
+			//No service reports unavailable, return OK
+			if(!verbose) {
+				return Response.ok(defaultOkReturnString).build()
+			} else {
+				return Response.ok(servicesToProcess).build()
+			}
 		}
-		
 	}
 
 	@GET

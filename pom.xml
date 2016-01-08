@@ -104,7 +104,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 						</properties>
 						<strictCheck>true</strictCheck>
 						<basedir>${basedir}</basedir>
-						<header>http://skltp.googlecode.com/svn/tp/license/lgpl/header.txt</header>
+						<header>header.txt</header>
 						<encoding>UTF-8</encoding>
 						<includes>
 							<include>src/main/**</include>

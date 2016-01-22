@@ -11,6 +11,8 @@
 	xmlns:imap="http://www.mulesoft.org/schema/mule/imap"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
 	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 		http://www.mulesoft.org/schema/mule/core    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -21,14 +23,20 @@
 		http://www.mulesoft.org/schema/mule/imap    http://www.mulesoft.org/schema/mule/imap/current/mule-imap.xsd
 		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 		http://www.mulesoft.org/schema/mule/vm      http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+		http://www.mulesoft.org/schema/mule/http    http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+		http://www.mulesoft.org/schema/mule/cxf     http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 	">
 
-	<!-- TODO: Add teststub-service specific definitions here -->
-	
-	<simple-service 
-		name="pingforconfiguration-teststub-service"
-        address="${PINGFORCONFIGURATION_TESTSTUB_INBOUND_URL}" 
-        component-class="se.skltp.components.muleprobe.pingforconfiguration.PingForConfigurationTestProducer"
-        type="jax-ws" />
+
+	<flow name="pingforconfiguration-teststub-service">
+		<http:inbound-endpoint
+			address="${PINGFORCONFIGURATION_TESTSTUB_INBOUND_URL}" 
+			exchange-pattern="request-response">
+		</http:inbound-endpoint>
+
+		<cxf:jaxws-service serviceClass="se.riv.itintegration.monitoring.rivtabp21.v1.PingForConfigurationResponderInterface"/>
+
+		<component class="se.skltp.components.muleprobe.pingforconfiguration.PingForConfigurationTestProducer"/>
+	</flow>
 
 </mule>

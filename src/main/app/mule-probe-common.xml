@@ -83,7 +83,10 @@
 	</spring:beans>
 	
 	<spring:beans>
+		<!--
 		<spring:import resource="classpath:soitoolkit-mule-http-connector.xml" />
+		-->
+		<spring:import resource="classpath:probe-soitoolkit-mule-http-connector.xml" />
 		<spring:import resource="classpath:soitoolkit-mule-file-connector.xml" />
 	</spring:beans>
 	<message-properties-transformer name="setJsonContentType"

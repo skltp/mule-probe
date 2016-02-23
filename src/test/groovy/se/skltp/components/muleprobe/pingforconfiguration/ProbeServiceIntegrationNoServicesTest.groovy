@@ -21,6 +21,7 @@
 package se.skltp.components.muleprobe.pingforconfiguration
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 import static se.skltp.components.muleprobe.MuleProbeMuleServer.getAddress
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -44,12 +45,13 @@ import org.soitoolkit.commons.mule.util.RecursiveResourceBundle
 @Slf4j
 public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 
-	private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("mule-probe-config", "mule-probe-config-override-test")
+	private static final String CONFIG_OVERRIDE_FILENAME = "mule-probe-config-override-test-without-services";
+	private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("mule-probe-config", CONFIG_OVERRIDE_FILENAME)
 	private static final String HTTP_CONNECTOR = "soitoolkit-http-connector"
-	
-	private static final String PROBESERVICE_TESTSTUB_FOLDER = rb.getString("PROBESERVICE_TESTSTUB_FOLDER")
 
 	private static final String PROBESERVICE_OK_RESULT = rb.getString("PROBE_RETURN_OK_STRING")
+	
+	private static final String PROBESERVICE_FILE = rb.getString("PROBESERVICE_FILE")
 	
 	private RestClient restClient
 
@@ -59,7 +61,10 @@ public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 		// Set to false if tests interfere with each other when Mule is started
 		// only once.
 		setDisposeContextPerClass(true);
-	}
+		
+		// override the config-override file to add a test specific file
+		System.setProperty("mule.probe.config.override.filename", CONFIG_OVERRIDE_FILENAME);
+	}	
 
 	protected String getConfigResources() {
 		return "soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
@@ -72,7 +77,7 @@ public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		restClient = new RestClient(muleContext, null)
-		FileUtil.initFolder(new File(PROBESERVICE_TESTSTUB_FOLDER))
+		FileUtil.initFolder(new File(PROBESERVICE_FILE).getParentFile())
 	}
 	
 	@Before
@@ -89,7 +94,7 @@ public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 		// Call the http-service with proper input
 		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe/unknown")
 
-		// Assert http-status 403
+		// Assert http-status 404
 		assertEquals(Integer.toString(Status.NOT_FOUND.getStatusCode()), response.getInboundProperty("http.status"))
 	}
 	
@@ -143,6 +148,18 @@ public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 		// Assert http-status 503 SERVICE UNAVAILABLE
 		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
 	}
+	
+	@Test
+	public void probeService_returns_error_when_probefile_is_missing() throws Exception {
+		
+		assertTrue(! new File(PROBESERVICE_FILE).exists())
+		
+		// Call the http-service with proper input
+		MuleMessage response = restClient.doHttpGetRequest_JsonContent(getAddress("PROBESERVICE_INBOUND_URL") + "/probe")
+		
+		// Assert http-status 503 SERVICE UNAVAILABLE
+		assertEquals(Integer.toString(Status.SERVICE_UNAVAILABLE.getStatusCode()), response.getInboundProperty("http.status"))
+	}
 
 	private void setTestProducerToTimeout() {
 		PingForConfigurationTestProducer.PINGFOR_TIMEOUT = true	
@@ -157,7 +174,7 @@ public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 	}
 	
 	private void setStatusInProbeFile(String status) throws Exception{
-		File probeFile = new File(rb.getString("PROBESERVICE_TESTSTUB_FILE"))
+		File probeFile = new File(PROBESERVICE_FILE)
         BufferedWriter out = new BufferedWriter(new FileWriter(probeFile))
         out.write(status)
         out.close()

@@ -15,7 +15,13 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd">
-	<!-- TODO: Add service specific definitions here -->
+
+	<spring:bean id="probeStatusBean"
+		class="se.skltp.components.muleprobe.ProbeStatusService"
+		init-method="init">
+		<!-- allows for overriding in tests -->
+		<spring:property name="configOverrideFileName" value="${mule.probe.config.override.filename:mule-probe-config-override}"/>
+	</spring:bean>
 	
 	<flow name="mule-probe" doc:name="mule-probe">
 		<http:inbound-endpoint 
@@ -25,7 +31,9 @@ http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/j
 			doc:description="This endpoint receives an HTTP message." />
         
         <jersey:resources doc:name="REST">
-            <component class="se.skltp.components.muleprobe.ProbeStatusService"/>
+            <component>
+            	<spring-object bean="probeStatusBean"/>
+            </component>
         </jersey:resources>
         
 	</flow>

@@ -49,19 +49,32 @@ public class ProbeStatusService {
 			</soapenv:Envelope>
 		'''
 	
-	final RecursiveResourceBundle rrb = new RecursiveResourceBundle("mule-probe-config","mule-probe-config-override")
+	RecursiveResourceBundle rrb
+	String probeFilePath
+	String downCriteria	
+	String defaultConnectionTimeout	
+	String defaultResponseTimeout	
+	String defaultOkReturnString	
+	File probeFile
 	
-	final String probeFilePath = rrb.getString('PROBESERVICE_FILE')
+	String configOverrideFileName;
 	
-	final String downCriteria = rrb.getString('PROBE_DOWN_CRITERIA')
+	public void setConfigOverrideFileName(String configOverrideFileName) {
+		this.configOverrideFileName = configOverrideFileName
+	}
 	
-	final String defaultConnectionTimeout = rrb.getString("CONNECTION_TIMEOUT_MS")
-	
-	final String defaultResponseTimeout = rrb.getString("SO_TIMEOUT_MS")
-	
-	final String defaultOkReturnString = rrb.getString("PROBE_RETURN_OK_STRING");
-	
-	def probeFile = new File(probeFilePath)
+	// must be set up as init-method in spring-config
+	public init() {
+		rrb = new RecursiveResourceBundle("mule-probe-config",configOverrideFileName)
+
+		probeFilePath = rrb.getString('PROBESERVICE_FILE')
+		downCriteria = rrb.getString('PROBE_DOWN_CRITERIA')
+		defaultConnectionTimeout = rrb.getString("CONNECTION_TIMEOUT_MS")
+		defaultResponseTimeout = rrb.getString("SO_TIMEOUT_MS")
+		defaultOkReturnString = rrb.getString("PROBE_RETURN_OK_STRING")
+		
+		probeFile = new File(probeFilePath)	
+	}	
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

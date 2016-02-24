@@ -124,16 +124,11 @@ public class ProbeServiceIntegrationNoServicesTest extends AbstractTestCase {
 		// Assert http-status 200
 		assertEquals(Integer.toString(Status.OK.getStatusCode()), response.getInboundProperty("http.status"))
 		
-		def slurper = new JsonSlurper()
+		def slurper = new JsonSlurper() 
 		def result = slurper.parseText(getProbeResultAsString(response))
 		
-		//Uses default timeout settings
-		assert result[0].name == "engagemangsindex"
-		assert result[0].serviceAvailable == true
-		assert result[0].connecttimeout == rb.getString("CONNECTION_TIMEOUT_MS")
-		assert result[0].responsetimeout == rb.getString("SO_TIMEOUT_MS")
-		assert result[0].probeAvailable == true
-		assert result[0].probeMessage == "Muleprobe probeFile signals OK"
+		assert result.probeAvailable == true
+		assert result.probeMessage == "Muleprobe probeFile signals OK"
 		
 	}
 	

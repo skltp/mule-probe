@@ -88,14 +88,19 @@ public class ProbeStatusService {
 		
 		// Check if no service are configured ie list is empty. If so do a check if probe is available and return result!
 		if (servicesToProcess.size == 0) {
-			ProcessingStatus dummyProcess = new ProcessingStatus()
-			addProbeStatus(dummyProcess)
+			ProcessingStatus noServicesToProcess = new ProcessingStatus()
+			addProbeStatus(noServicesToProcess)
 
-			if(!verbose) {
-				return Response.ok(defaultOkReturnString).build()
-			} else {
-				return Response.ok(dummyProcess).build()
+			if (!noServicesToProcess.probeAvailable) {
+				return Response.status(Status.SERVICE_UNAVAILABLE).entity(noServicesToProcess).build()
 			}
+			else if (!verbose) {
+				return Response.ok(defaultOkReturnString).build()
+			}
+			else {
+				return Response.ok(noServicesToProcess).build()
+			}
+			
 		} else {
 				
 			//Check if probe is down

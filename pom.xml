@@ -109,6 +109,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 							<exclude>**/*.jks</exclude>
 							<exclude>**/*.pem</exclude>
 							<exclude>**/probeFile.txt</exclude>
+							<exclude>src/test/java/org/mule/util/**</exclude>
 						</excludes>
 						<useDefaultExcludes>true</useDefaultExcludes>
 						<mapping>

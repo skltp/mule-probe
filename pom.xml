@@ -35,8 +35,6 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
         <cxf.version>2.7.15</cxf.version>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<generated-sources-path>${basedir}/target/generated/src/main/java</generated-sources-path>
-		<!-- Turn off strict checking of javadoc tags for Java 8 -->
-		<additionalparam>-Xdoclint:none</additionalparam>
 	</properties>
 
 	<dependencies>

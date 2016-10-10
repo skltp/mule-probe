@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--
 DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!
 [soi-toolkit.gen.version=0.6.1]
@@ -13,7 +13,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
     <parent>
         <groupId>se.skltp.commons</groupId>
         <artifactId>skltp-commons-mule-parent</artifactId>
-        <version>2.0.1</version>
+        <version>2.0.2</version>
     </parent>
 
     <groupId>se.skltp.components</groupId>

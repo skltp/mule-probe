@@ -18,16 +18,9 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 
     <groupId>se.skltp.components</groupId>
     <artifactId>mule-probe</artifactId>
-    <version>4.2-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
     <packaging>mule</packaging>
     <name>mule-probe</name>
-
-    <scm>
-			<url>http://github.com/skltp/mule-probe</url>
-			<connection>scm:git:git://github.com/skltp/mule-probe.git</connection>
-			<developerConnection>scm:git:git://github.com/skltp/mule-probe.git</developerConnection>
-			<tag>HEAD</tag>
-		</scm>
 
 	<properties>
 		<!-- Properties for generating code from XML Schemas (JAX-WS) -->
@@ -35,10 +28,34 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
         <cxf.version>2.7.15</cxf.version>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<generated-sources-path>${basedir}/target/generated/src/main/java</generated-sources-path>
+		<commons-collections.mule.version>3.2.2</commons-collections.mule.version>
 	</properties>
 
-	<dependencies>
+	<distributionManagement>
+		<repository>
+			<id>release-nexus</id>
+			<name>Release Nexus</name>
+			<url>${releases-nexus-url}</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot-nexus</id>
+			<name>Snapshot Nexus</name>
+			<url>${snapshot-nexus-url}</url>
+		</snapshotRepository>
+	</distributionManagement>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- Override 3.2.1 version from soi-toolkit -->
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>${commons-collections.mule.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
 		<!-- itintegration monitoring schemas för PingForConfiguration -->
 		<dependency>
 		  	<groupId>se.skltp.itintegration.monitoring</groupId>

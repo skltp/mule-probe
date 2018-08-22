@@ -30,6 +30,13 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		<generated-sources-path>${basedir}/target/generated/src/main/java</generated-sources-path>
 	</properties>
 
+	<scm>
+		<url>http://github.com/skltp/mule-probe</url>
+		<connection>scm:git:https://github.com/skltp/mule-probe.git</connection>
+		<developerConnection>scm:git:https://github.com/skltp/mule-probe.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	
 	<dependencies>
 		<!-- itintegration monitoring schemas för PingForConfiguration -->
 		<dependency>

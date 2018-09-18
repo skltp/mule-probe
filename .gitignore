@@ -4,3 +4,6 @@
 .studio
 target
 .mule/
+
+*.iml
+.idea

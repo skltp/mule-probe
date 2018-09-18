@@ -13,21 +13,14 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
     <parent>
         <groupId>se.skltp.commons</groupId>
         <artifactId>skltp-commons-mule-parent</artifactId>
-        <version>2.0.2</version>
+        <version>2.0.3</version>
     </parent>
 
     <groupId>se.skltp.components</groupId>
     <artifactId>mule-probe</artifactId>
-    <version>4.1</version>
+    <version>4.1.2-SNAPSHOT</version>
     <packaging>mule</packaging>
     <name>mule-probe</name>
-
-    <scm>
-			<url>http://github.com/skltp/mule-probe</url>
-			<connection>scm:git:git://github.com/skltp/mule-probe.git</connection>
-			<developerConnection>scm:git:git://github.com/skltp/mule-probe.git</developerConnection>
-			<tag>v4.1</tag>
-		</scm>
 
 	<properties>
 		<!-- Properties for generating code from XML Schemas (JAX-WS) -->
@@ -37,8 +30,14 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
 		<generated-sources-path>${basedir}/target/generated/src/main/java</generated-sources-path>
 	</properties>
 
+	<scm>
+		<url>http://github.com/skltp/mule-probe</url>
+		<connection>scm:git:https://github.com/skltp/mule-probe.git</connection>
+		<developerConnection>scm:git:https://github.com/skltp/mule-probe.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	
 	<dependencies>
-
 		<!-- itintegration monitoring schemas för PingForConfiguration -->
 		<dependency>
 		  	<groupId>se.skltp.itintegration.monitoring</groupId>
@@ -426,7 +425,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
         <profile>
 			<id>license</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<build>
 				<plugins>
